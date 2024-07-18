@@ -45,7 +45,7 @@
     list-style-type: none;
     margin: 0;
     padding: 0;
-    width: 25%;
+    width: 10%;
     height: 100%;
     position: fixed;
     overflow: true;
