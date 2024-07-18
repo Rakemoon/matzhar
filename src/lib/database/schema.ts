@@ -1,5 +1,5 @@
-import { relations, sql } from "drizzle-orm";
-import { pgTable, pgEnum, uuid, text , date, numeric, boolean, integer } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { pgTable, pgEnum, uuid, text , date, boolean, integer, real } from "drizzle-orm/pg-core";
 
 export const userRole = pgEnum("user_role", ["admin", "buyer", "shoper"]);
 
@@ -7,15 +7,15 @@ export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
   role: userRole("role").default("buyer"),
-  email: text("email").unique(),
-  password: text("password"),
+  email: text("email").unique().notNull(),
+  password: text("password").notNull(),
 });
 
 export const products = pgTable("products", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
   description: text("description").notNull(),
-  price: numeric("price").notNull(),
+  price: real("price").notNull(),
   userId: uuid("user_id").references(() => users.id),
 });
 
@@ -29,7 +29,7 @@ export const productVariants = pgTable("products_variants", {
 export const productVariantChoices = pgTable("product_variant_choices", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
-  priceMutation: numeric("price_mutation").default(sql`numeric(0)`),
+  priceMutation: real("price_mutation").default(0),
   variantId: uuid("variant_id").references(() => productVariants.id)
 });
 
@@ -44,8 +44,8 @@ export const cartItems = pgTable("cart_items", {
   checked: boolean("checked").default(true),
   amount: integer("amount").default(1),
   productId: uuid("product_id").references(() => products.id),
-  variantId: uuid("variant_id").references(() => cartItems.productId),
-  variantChoiceId: uuid("variant_choice_id").references(() => cartItems.variantId),
+  variantId: uuid("variant_id").references(() => productVariants.id),
+  variantChoiceId: uuid("variant_choice_id").references(() => productVariantChoices.id),
 });
 
 export const orders = pgTable("orders", {
@@ -60,8 +60,8 @@ export const orderItems = pgTable("order_items", {
   amount: integer("amount").default(1),
   orderId: uuid("order_id").references(() => orders.id),
   productId: uuid("product_id").references(() => products.id),
-  variantId: uuid("variant_id").references(() => cartItems.productId),
-  variantChoiceId: uuid("variant_choice_id").references(() => cartItems.variantId),
+  variantId: uuid("variant_id").references(() => productVariantChoices.id),
+  variantChoiceId: uuid("variant_choice_id").references(() => productVariantChoices.id),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({

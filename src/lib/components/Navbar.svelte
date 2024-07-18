@@ -1,6 +1,7 @@
 <script lang="ts">
   import IconHome from "@tabler/icons-svelte/icons/home";
-  import IconCart from "@tabler/icons-svelte/icons/shopping-cart"
+  import IconCart from "@tabler/icons-svelte/icons/shopping-cart";
+  import IconAuth from "@tabler/icons-svelte/icons/auth-2fa";
   interface NavbarProp {
     currentPath?: string
   }
@@ -23,6 +24,11 @@
       path: "/cart",
       label: "Cart",
       icon: IconCart
+    },
+    {
+      path: "/auth",
+      label: "Auth",
+      icon: IconAuth
     }
   ];
 </script>

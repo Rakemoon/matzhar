@@ -1,9 +1,10 @@
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
-  schema: "./database/schema,ts",
+  schema: "./src/lib/database/schema.ts",
+  out: "./drizzle/supabase/migrations",
   dialect: "postgresql",
-  migrations: {
-    prefix: "supabase"
+  dbCredentials: {
+    url: process.env.SECRET_DATABASE_URL!
   }
 });
