@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "../app.css";
   import Navbar from "$lib/components/Navbar.svelte";
   import PopUps from "$lib/components/PopUps.svelte";
   import { PopUpState } from "$lib/states/PopUpState.svelte";

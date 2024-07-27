@@ -10,7 +10,7 @@
   }
 </script>
 
-<h1>Hello ! do you wanna sum of this product ?</h1>
+<h1 class="text-3xl font-bold underline">Hello ! do you wanna sum of this product ?</h1>
 {#each products as product}
   <li><button onclick={() => addToChart(product.name)}>{product.name}</button></li>
 {/each}
