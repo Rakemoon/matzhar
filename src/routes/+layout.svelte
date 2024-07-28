@@ -12,10 +12,10 @@
 <div class="route-display">
   {@render children()}
 </div>
-<style>
-  .route-display {
-    margin-left: 10%;
-    padding: 1px 16px;
-    height: 1000px;
+
+<style lang="postcss">
+  :global(html, body) {
+    padding: 0;
+    height: 100%;
   }
 </style>
