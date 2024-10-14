@@ -1,21 +1,37 @@
 <script lang="ts">
     import "../app.css";
-    import Navbar from "$lib/components/Navbar.svelte";
-    import PopUps from "$lib/components/PopUps.svelte";
-    import { PopUpState } from "$lib/states/PopUpState.svelte";
-    import { page } from "$app/stores";
-    let { children } = $props();
+    import X from "@tabler/icons-svelte/icons/x";
+    const { children } = $props();
 </script>
 
-<Navbar currentPath={$page.route.id!} />
-<PopUps list={PopUpState} />
-<div class="route-display">
-    {@render children()}
-</div>
+<div class="h-screen max-w-full">
+    <div class="drawer lg:drawer-open">
+        <input class="drawer-toggle" type="checkbox" id="root-drawer" />
+        <div class="drawer-content h-full">{@render children()}</div>
+        <div class="drawer-side z-10">
+            <label class="drawer-overlay" for="root-drawer"></label>
+            <ul class="menu bg-base-200 text-base-content h-full p-4 w-96">
+                <div class="menu-title flex justify-between items-center">
+                    <input
+                        type="checkbox"
+                        class="theme-controller"
+                        value="light"
+                        id="valentine-theme"
+                        hidden
+                    />
+                    <label
+                        class="btn text-3xl lg:flex-grow"
+                        for="valentine-theme"
+                    >
+                        Mathzar
+                    </label>
+                    <label for="root-drawer" class="lg:hidden">
+                        <X />
+                    </label>
+                </div>
 
-<style lang="postcss">
-    :global(html, body) {
-        padding: 0;
-        height: 100%;
-    }
-</style>
+                <li></li>
+            </ul>
+        </div>
+    </div>
+</div>
