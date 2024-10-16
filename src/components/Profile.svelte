@@ -1,10 +1,7 @@
 <script lang="ts">
+    import { loginInfo } from "$lib/states/index.svelte";
     import IconLogout from "~icons/ion/log-out";
-    type ProfileProps = {
-        name: string;
-        avatar?: string;
-    };
-    const { name, avatar }: ProfileProps = $props();
+    import IconLogin from "~icons/ion/log-in";
     const themes = [
         ["default", "System"],
         ["light", "Light"],
@@ -16,12 +13,7 @@
 {#snippet avatarImage()}
     <div class="avatar">
         <div class="w-8 rounded-full aspect-square">
-            <img
-                src={avatar ??
-                    "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"}
-                alt="user"
-                class="object-cover"
-            />
+            <img src={loginInfo.user.image} alt="user" class="object-cover" />
         </div>
     </div>
 {/snippet}
@@ -35,7 +27,7 @@
             class="menu-title inline-flex gap-2.5 items-center border-b-2 border-neutral mb-2"
         >
             {@render avatarImage()}
-            <span class="text-base-content">{name}</span>
+            <span class="text-base-content">{loginInfo.user.name}</span>
         </div>
         <li>
             <details>
@@ -56,9 +48,18 @@
             </details>
         </li>
         <li>
-            <a href="/" class="inline-flex items-center text-error">
-                <IconLogout /> Logout
-            </a>
+            {#if loginInfo.isLoggedIn}
+                <button
+                    class="inline-flex items-center text-error"
+                    onclick={() => (loginInfo.isLoggedIn = false)}
+                >
+                    <IconLogout /> Logout
+                </button>
+            {:else}
+                <a href="/auth" class="inline-flex items-center text-success">
+                    <IconLogin /> Login
+                </a>
+            {/if}
         </li>
     </ul>
 </div>

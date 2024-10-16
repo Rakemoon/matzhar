@@ -31,3 +31,12 @@ export async function updateUserByID(
 export async function deleteUser(id: string) {
     return db.delete(users).where(eq(users.id, id)).execute();
 }
+
+export async function getUserByEmail(email: string) {
+    return db
+        .select()
+        .from(users)
+        .where(eq(users.email, email))
+        .execute()
+        .then((x) => x[0] as typeof users.$inferSelect | undefined);
+}
