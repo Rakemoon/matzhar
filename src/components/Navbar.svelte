@@ -1,8 +1,8 @@
 <script lang="ts">
-    import IconChevronDown from "@tabler/icons-svelte/icons/chevron-down";
+    import IconChevronDown from "~icons/ion/chevron-down";
+    import IconCart from "~icons/ion/cart";
     import Logo from "./Logo.svelte";
     import SearchBar from "./SearchBar.svelte";
-    import ShoppingBag from "@tabler/icons-svelte/icons/shopping-bag";
     import Profile from "./Profile.svelte";
 
     type Category = {
@@ -56,7 +56,7 @@
             <SearchBar />
             <div class="tooltip tooltip-bottom" data-tip="Cart">
                 <button class="btn btn-ghost btn-circle">
-                    <ShoppingBag />
+                    <IconCart class="text-xl" />
                 </button>
             </div>
             <Profile name="Mathzar" />

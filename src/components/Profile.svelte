@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Logout from "@tabler/icons-svelte/icons/Logout";
+    import IconLogout from "~icons/ion/log-out";
     type ProfileProps = {
         name: string;
         avatar?: string;
@@ -57,7 +57,7 @@
         </li>
         <li>
             <a href="/" class="inline-flex items-center text-error">
-                <Logout /> Logout
+                <IconLogout /> Logout
             </a>
         </li>
     </ul>

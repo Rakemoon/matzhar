@@ -1,5 +1,5 @@
 <script lang="ts">
-    import IconSearch from "@tabler/icons-svelte/icons/search";
+    import IconSearch from "~icons/ion/search";
 
     let modal: HTMLDialogElement;
     let value = $state("");
@@ -18,10 +18,10 @@
     <div class="modal-box outline-none">
         You searched <small>{value}</small>
     </div>
-    <button class="modal-backdrop outline-none" onclick={onClose}></button>
+    <button class="modal-backdrop outline-none" onclick={onClose}>u</button>
 </dialog>
 
 <form onsubmit={onSubmit} class="input inline-flex items-center gap-2">
     <input type="text" placeholder="Search..." bind:value />
-    <IconSearch />
+    <IconSearch class="text-xl" />
 </form>
