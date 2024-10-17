@@ -6,10 +6,10 @@
     const { children } = $props();
 </script>
 
-<div class="flex flex-col min-h-screen bg-base-100 px-10">
+<div class="flex flex-col min-h-screen bg-base-100 px-10 relative">
     {#if $page.url.pathname !== "/auth"}
         <Navbar
-            class="sticky top-0 left-0 z-30"
+            class="z-30 bg-base-100 top-0 sticky"
             categories={[
                 { name: "Crewneck", href: "/" },
                 { name: "Jacket", href: "/" },
