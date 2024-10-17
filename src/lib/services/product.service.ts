@@ -23,7 +23,6 @@ export async function getAllDetailedProduct(
             productVariantChoices,
             eq(productVariants.id, productVariantChoices.variantId),
         )
-        .limit(take)
         .offset(skip);
 
     const result = queryResult.reduce<
@@ -67,4 +66,53 @@ export async function getAllDetailedProduct(
     }, []);
 
     return result;
+}
+
+export type IGetDetailedProductResult = Awaited<
+    ReturnType<typeof getAllDetailedProduct>
+>;
+
+export type INewProducts = {
+    name: string;
+    description: string;
+    price: number;
+    variants: {
+        name: string;
+        description: string;
+        choices: { name: string; priceMutation: number }[];
+    }[];
+};
+
+export async function createProduct(userId: string, data: INewProducts) {
+    return db.transaction(async (tx) => {
+        const productId = await tx
+            .insert(products)
+            .values({
+                name: data.name,
+                description: data.description,
+                price: data.price,
+                userId,
+            })
+            .returning({ id: products.id })
+            .then(([x]) => x.id);
+        for (const variant of data.variants) {
+            const variantId = await tx
+                .insert(productVariants)
+                .values({
+                    name: variant.name,
+                    description: variant.description,
+                    productId,
+                })
+                .returning({ id: productVariants.id })
+                .then(([x]) => x.id);
+            await tx.insert(productVariantChoices).values(
+                variant.choices.map((x) => ({
+                    name: x.name,
+                    priceMutation: x.priceMutation,
+                    variantId,
+                })),
+            );
+        }
+        return true;
+    });
 }

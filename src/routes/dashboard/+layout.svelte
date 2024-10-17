@@ -6,7 +6,7 @@
     const route = $derived($page.route.id?.replace("/dashboard/", ""));
 </script>
 
-<div class="flex h-full">
+<div class="flex min-h-full grow">
     <div class="w-72 menu bg-base-300 relative">
         <ul class="h-fit sticky top-20">
             <li>
