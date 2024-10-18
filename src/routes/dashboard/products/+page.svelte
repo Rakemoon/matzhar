@@ -10,6 +10,7 @@
     import { pushToast } from "$lib/states/toast";
     import type { IGetDetailedProductResult } from "$lib/services/product.service";
     import { currencyFormat } from "$lib/util/string";
+    import { json } from "@sveltejs/kit";
 
     let newProduct = $state({
         name: "",
@@ -22,34 +23,84 @@
         }[],
     });
 
+    type Product = IGetDetailedProductResult[number] & { checked: boolean };
+
+    let products = $state<Product[]>([] as never);
+    let isProductsRetrieved = $state(false);
+
+    let isAllChecked = $derived(
+        products.every((x) => x.checked === true) && products.length > 0,
+    );
+
+    let isOneOfProductChecked = $derived(
+        products.some((x) => x.checked === true),
+    );
+
     async function retrieveProducts() {
-        const {
-            success,
-            result,
-        }: { success: boolean; result: IGetDetailedProductResult } =
+        const { success, result }: { success: boolean; result: Product[] } =
             await fetch("/api/products").then((x) => x.json());
         if (!success) {
             pushToast("Failed to retrieve products", "error");
         }
-        return result;
+        products.push(...result);
     }
 
     async function onSubmitNewProduct() {
         pushToast("Creating product...", "info");
-        const { success } = await fetch(
-            "/api/products?userId=5aef7f93-bfe9-4066-b553-f5241a8962a6",
-            {
-                method: "POST",
-                body: JSON.stringify(newProduct),
-            },
-        ).then((x) => x.json());
+        const { success, result }: { success: boolean; result: Product[] } =
+            await fetch(
+                "/api/products?userId=5aef7f93-bfe9-4066-b553-f5241a8962a6",
+                {
+                    method: "POST",
+                    body: JSON.stringify(newProduct),
+                },
+            ).then((x) => x.json());
         if (success) {
             newProduct = { name: "", price: 0, description: "", variants: [] };
+            products.unshift(...result);
             pushToast("Product created!", "success");
         } else {
             pushToast("Failed to create product!", "error");
         }
     }
+
+    async function deleteMany() {
+        const checkedProductsId: string[] = [];
+        for (const product of products)
+            if (product.checked) checkedProductsId.push(product.id);
+        pushToast("Deleting products...", "info");
+        const { success } = await fetch("/api/products", {
+            method: "DELETE",
+            body: JSON.stringify(checkedProductsId),
+        }).then((x) => x.json());
+
+        if (success) {
+            products = products.filter(
+                (x) => !checkedProductsId.includes(x.id),
+            );
+            pushToast("Products deleted!", "success");
+        } else {
+            pushToast("Failed to delete products!", "error");
+        }
+    }
+
+    async function deleteProduct(id: string) {
+        pushToast("Deleting product...", "info");
+        const { success } = await fetch(`/api/products`, {
+            method: "DELETE",
+            body: JSON.stringify([id]),
+        }).then((x) => x.json());
+        if (success) {
+            products = products.filter((x) => x.id !== id);
+            pushToast("Product deleted!", "success");
+        } else {
+            pushToast("Failed to delete product!", "error");
+        }
+    }
+
+    $effect(() => {
+        retrieveProducts().then(() => (isProductsRetrieved = true));
+    });
 </script>
 
 <div class="p-2.5 flex gap-2.5 w-full items-center">
@@ -208,70 +259,113 @@
         <tr>
             <th>
                 <label>
-                    <input type="checkbox" class="checkbox" />
+                    <input
+                        type="checkbox"
+                        class="checkbox"
+                        checked={isAllChecked}
+                        onchange={() => {
+                            const allCheck = isAllChecked;
+                            products.forEach((x) => (x.checked = !allCheck));
+                        }}
+                    />
                 </label>
             </th>
             <th>Name</th>
             <th>Description</th>
             <th>Variants</th>
-            <th></th>
+            <th>
+                {#if isOneOfProductChecked}
+                    <button
+                        class="btn btn-xs btn-secondary"
+                        onclick={deleteMany}
+                    >
+                        <IconClose /> Delete
+                    </button>
+                {/if}
+            </th>
         </tr>
     </thead>
     <tbody>
-        <!-- row 1 -->
-        {#await retrieveProducts() then x}
-            {#each x as y}
+        {#if isProductsRetrieved}
+            {#if products.length > 0}
+                {#each products as y}
+                    <tr>
+                        <th>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    class="checkbox"
+                                    bind:checked={y.checked}
+                                />
+                            </label>
+                        </th>
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <div class="avatar">
+                                    <div class="mask mask-squircle h-12 w-12">
+                                        <img
+                                            src="https://ih1.redbubble.net/image.3572931436.7035/ssrco,classic_tee,flatlay,fafafa:ca443f4786,front,wide_portrait,750x1000.jpg"
+                                            alt="Avatar Tailwind CSS Component"
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="font-bold">{y.name}</div>
+                                    <div class="text-sm opacity-50">
+                                        {currencyFormat(y.price)}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {y.description}
+                        </td>
+                        <td>
+                            {#each y.variants as variant}
+                                {variant.name}: {variant.choices
+                                    .map((z) => z.name)
+                                    .join(", ")}
+                                <br />
+                            {/each}
+                        </td>
+                        <th>
+                            <button class="btn btn-primary btn-sm"
+                                ><IconEye /></button
+                            >
+                            <button class="btn btn-warning btn-sm"
+                                ><IconPencil /></button
+                            >
+                            <button
+                                class="btn btn-secondary btn-sm"
+                                onclick={() => deleteProduct(y.id)}
+                                ><IconClose /></button
+                            >
+                        </th>
+                    </tr>
+                {/each}
+            {:else}
                 <tr>
-                    <th>
-                        <label>
-                            <input type="checkbox" class="checkbox" />
-                        </label>
-                    </th>
+                    <th></th>
+                    <td></td>
                     <td>
-                        <div class="flex items-center gap-3">
-                            <div class="avatar">
-                                <div class="mask mask-squircle h-12 w-12">
-                                    <img
-                                        src="https://ih1.redbubble.net/image.3572931436.7035/ssrco,classic_tee,flatlay,fafafa:ca443f4786,front,wide_portrait,750x1000.jpg"
-                                        alt="Avatar Tailwind CSS Component"
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <div class="font-bold">{y.name}</div>
-                                <div class="text-sm opacity-50">
-                                    {currencyFormat(y.price)}
-                                </div>
-                            </div>
+                        <div class="text-3xl inline-flex items-center">
+                            <IconClose />
+                            Empty
                         </div>
                     </td>
-                    <td>
-                        {y.description}
-                    </td>
-                    <td>
-                        {#each y.variants as variant}
-                            {variant.name}: {variant.choices
-                                .map((z) => z.name)
-                                .join(", ")}
-                            <br />
-                        {/each}
-                    </td>
-                    <th>
-                        <button class="btn btn-primary btn-sm"
-                            ><IconEye /></button
-                        >
-                        <button class="btn btn-warning btn-sm"
-                            ><IconPencil /></button
-                        >
-                        <button class="btn btn-secondary btn-sm"
-                            ><IconClose /></button
-                        >
-                    </th>
+                </tr>
+            {/if}
+        {:else}
+            {#each Array(10) as _}
+                <tr>
+                    <th><div class="skeleton h-10"></div></th>
+                    <td><div class="skeleton h-10"></div></td>
+                    <td><div class="skeleton h-10"></div></td>
+                    <td><div class="skeleton h-10"></div></td>
                 </tr>
             {/each}
-        {/await}
+        {/if}
     </tbody>
-    <!-- foot -->
     <tfoot class="sticky bottom-0 bg-base-100">
         <tr>
             <th></th>

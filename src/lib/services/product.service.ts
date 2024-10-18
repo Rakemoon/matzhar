@@ -6,7 +6,7 @@ import {
     productVariants,
 } from "$lib/database/schema";
 import type { MergeLeft } from "$lib/util/type";
-import { eq, ilike } from "drizzle-orm";
+import { eq, ilike, or } from "drizzle-orm";
 
 export async function getAllDetailedProduct(
     take: number,
@@ -16,7 +16,12 @@ export async function getAllDetailedProduct(
     const queryResult = await db
         .select()
         .from(products)
-        .where(ilike(products.name, `%${query}%`))
+        .where(
+            or(
+                ilike(products.name, `%${query}%`),
+                query.length ? eq(products.id, query) : undefined,
+            ),
+        )
         .leftJoin(users, eq(products.userId, users.id))
         .leftJoin(productVariants, eq(products.id, productVariants.productId))
         .leftJoin(
@@ -84,7 +89,7 @@ export type INewProducts = {
 };
 
 export async function createProduct(userId: string, data: INewProducts) {
-    return db.transaction(async (tx) => {
+    const id = await db.transaction(async (tx) => {
         const productId = await tx
             .insert(products)
             .values({
@@ -113,6 +118,11 @@ export async function createProduct(userId: string, data: INewProducts) {
                 })),
             );
         }
-        return true;
+        return productId;
     });
+    return getAllDetailedProduct(1, 0, id);
+}
+
+export async function deleteProducts(ids: string[]) {
+    return db.delete(products).where(or(...ids.map((x) => eq(products.id, x))));
 }

@@ -2,6 +2,7 @@ import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import {
     createProduct,
+    deleteProducts,
     getAllDetailedProduct,
 } from "$lib/services/product.service";
 
@@ -21,5 +22,13 @@ export const POST: RequestHandler = async ({ url, request }) => {
     return json({
         success: true,
         result: await createProduct(userId, bodyJson),
+    });
+};
+
+export const DELETE: RequestHandler = async ({ request }) => {
+    const body = await request.json();
+    return json({
+        success: true,
+        result: await deleteProducts(body),
     });
 };
