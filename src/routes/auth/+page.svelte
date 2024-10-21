@@ -87,11 +87,11 @@
     });
 </script>
 
-<div class="h-screen w-full py-10">
+<div class="h-screen w-full py-10 max-sm:py-2.5">
     <div
-        class="w-full h-full rounded-box shadow-md inline-flex overflow-hidden"
+        class="w-full h-full rounded-box shadow-md flex overflow-hidden max-md:flex-col-reverse"
     >
-        <div class="w-max min-w-96 p-5 bg-base-200">
+        <div class="w-max min-w-96 p-5 bg-base-200 max-md:min-w-full">
             <form class="flex flex-col gap-2 justify-center h-full" {onsubmit}>
                 {#if isLogin}
                     <h1 class="text-3xl text-center">Welcome Back!</h1>
