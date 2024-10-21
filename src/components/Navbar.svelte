@@ -18,10 +18,10 @@
     const { class: className, categories }: NavbarProps = $props();
 </script>
 
-<nav class="navbar border-b-2 border-neutral p-0 {className}">
+<nav class="navbar border-b-2 border-neutral p-0 bg-base-100 {className}">
     <div class="navbar-start flex gap-5">
         <Logo />
-        <ul class="flex justify-between">
+        <ul class="flex justify-between max-md:hidden">
             <li>
                 <button class="btn btn-ghost">Products</button>
             </li>
@@ -52,7 +52,7 @@
         </ul>
     </div>
     <div class="navbar-end">
-        <div class="flex gap-2.5">
+        <div class="flex">
             <SearchBar />
             <div class="tooltip tooltip-bottom" data-tip="Cart">
                 <button class="btn btn-ghost btn-circle">

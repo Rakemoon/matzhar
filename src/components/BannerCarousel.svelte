@@ -14,7 +14,7 @@
 </script>
 
 <div
-    class="carousel rounded-box w-full h-96 max-md:h-max shadow-md border border-neutral {className}"
+    class="carousel rounded-box w-full h-full max-md:h-max shadow-md border border-neutral {className}"
 >
     {#each items as item}
         <div class="carousel-item w-full">

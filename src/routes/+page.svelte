@@ -1,5 +1,27 @@
-<script>
+<script lang="ts">
     import BannerCarousel from "$components/BannerCarousel.svelte";
+    import ProductCard from "$components/ProductCard.svelte";
+    import type { IGetAllProductsResult } from "$lib/services/product.service";
+    import { pushToast } from "$lib/states/toast";
+
+    let products = $state.raw<null | IGetAllProductsResult>(null);
+
+    async function retrieveProducts() {
+        const {
+            result,
+            success,
+        }: { success: boolean; result: IGetAllProductsResult } = await (
+            await fetch("/api/products?simple")
+        ).json();
+        if (success) products = result;
+        else {
+            pushToast("Failed to load products", "error");
+        }
+    }
+
+    $effect(() => {
+        retrieveProducts();
+    });
 </script>
 
 <div class="mt-2.5 flex-col flex-grow">
@@ -27,11 +49,27 @@
                 },
             ]}
         />
-        <div class="col-span-3 h-full bg-base-200 rounded-box skeleton"></div>
-        <div class="col-span-3 h-full bg-base-200 rounded-box skeleton"></div>
-        <div class="col-span-3 h-full bg-base-200 rounded-box skeleton"></div>
-        <div
-            class="col-span-3 h-[20rem] bg-base-200 rounded-box skeleton"
-        ></div>
+        {#if !products}
+            <div
+                class="col-span-3 h-full bg-base-200 rounded-box skeleton"
+            ></div>
+            <div
+                class="col-span-3 h-full bg-base-200 rounded-box skeleton"
+            ></div>
+            <div
+                class="col-span-3 h-full bg-base-200 rounded-box skeleton"
+            ></div>
+            <div
+                class="col-span-3 h-[20rem] bg-base-200 rounded-box skeleton"
+            ></div>
+        {:else}
+            {#each products as product}
+                <ProductCard
+                    {...product}
+                    img="https://ih1.redbubble.net/image.3572931436.7035/ssrco,classic_tee,flatlay,fafafa:ca443f4786,front,wide_portrait,750x1000.jpg"
+                    class="col-span-3 w-full max-sm:col-span-12 max-md:col-span-6 max-lg:col-span-4"
+                />
+            {/each}
+        {/if}
     </section>
 </div>

@@ -7,7 +7,7 @@
 </script>
 
 <div class="flex min-h-full grow">
-    <div class="w-72 menu bg-base-300 relative">
+    <div class="w-72 menu bg-base-300 relative max-md:hidden">
         <ul class="h-fit sticky top-20">
             <li>
                 <ul>

@@ -126,3 +126,15 @@ export async function createProduct(userId: string, data: INewProducts) {
 export async function deleteProducts(ids: string[]) {
     return db.delete(products).where(or(...ids.map((x) => eq(products.id, x))));
 }
+export async function getAllProducts() {
+    return db
+        .select({
+            id: products.id,
+            name: products.name,
+            price: products.price,
+            description: products.description,
+        })
+        .from(products);
+}
+
+export type IGetAllProductsResult = Awaited<ReturnType<typeof getAllProducts>>;

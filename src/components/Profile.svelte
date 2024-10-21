@@ -47,6 +47,7 @@
                 </ul>
             </details>
         </li>
+        <li><a href="/dashboard">Dashboard</a></li>
         <li>
             {#if loginInfo.isLoggedIn}
                 <button

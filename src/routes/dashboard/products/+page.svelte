@@ -103,7 +103,9 @@
     });
 </script>
 
-<div class="p-2.5 flex gap-2.5 w-full items-center">
+<div
+    class="p-2.5 flex gap-2.5 w-full items-center max-md:flex-col max-md:items-start"
+>
     <IconCopy />
     <span class="text-xl font-bold flex-grow">Products</span>
     <label class="btn btn-primary" for="create-products-check">

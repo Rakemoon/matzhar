@@ -6,7 +6,9 @@
     const { children } = $props();
 </script>
 
-<div class="flex flex-col min-h-screen bg-base-100 px-10 relative">
+<div
+    class="flex flex-col min-h-screen bg-base-100 px-10 relative max-sm:px-2.5"
+>
     {#if $page.url.pathname !== "/auth"}
         <Navbar
             class="z-30 bg-base-100 top-0 sticky"

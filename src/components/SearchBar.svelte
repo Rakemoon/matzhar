@@ -21,7 +21,10 @@
     <button class="modal-backdrop outline-none" onclick={onClose}>u</button>
 </dialog>
 
-<form onsubmit={onSubmit} class="input inline-flex items-center gap-2">
+<form
+    onsubmit={onSubmit}
+    class="input inline-flex items-center gap-2 max-sm:hidden"
+>
     <input type="text" placeholder="Search..." bind:value />
     <IconSearch class="text-xl" />
 </form>
