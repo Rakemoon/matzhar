@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { IGetAllProductsResult } from "$lib/services/product.service";
     import { currencyFormat } from "$lib/util/string";
+    import { pushToast } from "$lib/states/toast";
 
     const {
         img,
@@ -12,6 +13,10 @@
         img: string;
         class?: string;
     } = $props();
+
+    function addToCart() {
+        pushToast("Adding to cart...", "info");
+    }
 </script>
 
 <div class="card bg-base-100 shadow-xl card-compact {className}">
@@ -26,7 +31,9 @@
         <p>{description}</p>
         <div class="card-actions justify-between items-center">
             <div class="text-2xl text-accent">{currencyFormat(price)}</div>
-            <button class="btn btn-primary">Buy Now</button>
+            <button class="btn btn-primary" onclick={addToCart}
+                >Add to Cart</button
+            >
         </div>
     </div>
 </div>
