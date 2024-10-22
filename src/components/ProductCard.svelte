@@ -8,6 +8,7 @@
         name,
         description,
         price,
+        id,
         class: className = "",
     }: IGetAllProductsResult[number] & {
         img: string;
@@ -25,7 +26,9 @@
     </figure>
     <div class="card-body">
         <h2 class="card-title">
-            {name}
+            <a href="/p/{id}">
+                {name}
+            </a>
             <div class="badge badge-secondary">NEW</div>
         </h2>
         <p>{description}</p>
