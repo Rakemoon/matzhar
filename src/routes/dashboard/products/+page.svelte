@@ -10,7 +10,8 @@
     import { pushToast } from "$lib/states/toast";
     import type { IGetDetailedProductResult } from "$lib/services/product.service";
     import { currencyFormat } from "$lib/util/string";
-    import { json } from "@sveltejs/kit";
+
+    let dialog: HTMLDialogElement;
 
     let newProduct = $state({
         name: "",
@@ -96,6 +97,10 @@
         } else {
             pushToast("Failed to delete product!", "error");
         }
+    }
+
+    async function openEditModal(product: Product) {
+        dialog.showModal();
     }
 
     $effect(() => {
@@ -334,7 +339,9 @@
                             <button class="btn btn-primary btn-sm"
                                 ><IconEye /></button
                             >
-                            <button class="btn btn-warning btn-sm"
+                            <button
+                                class="btn btn-warning btn-sm"
+                                onclick={() => openEditModal(y)}
                                 ><IconPencil /></button
                             >
                             <button
@@ -377,3 +384,13 @@
         </tr>
     </tfoot>
 </table>
+<!-- Open the modal using ID.showModal() method -->
+<dialog class="modal" bind:this={dialog}>
+    <div class="modal-box">
+        <h3 class="text-lg font-bold">Hello!</h3>
+        <p class="py-4">Press ESC key or click outside to close</p>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
